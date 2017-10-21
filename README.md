@@ -10,7 +10,7 @@ You probably want either `linux-for-ansible.sh` or `windows-for-winrm.ps1`
 
 ### Linux
 
-Note: Currently this script only targets Ubuntu. Your mileage may vary on Debian.
+Note: Currently this script only targets Debian/Ubuntu/Mint. Your mileage may vary on other Debian-based distros.
 
 ```Shell
 $ bash <(curl -s https://git.io/bstlnx)

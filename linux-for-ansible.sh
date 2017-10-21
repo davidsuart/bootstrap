@@ -1,34 +1,72 @@
 #!/usr/bin/env bash
-set -e -x
+##
+## SYNOPSIS
+##   Install ansible & minimum python dependencies
+## NOTES
+##   Author: https://github.com/davidsuart
+##   License: MIT License (See repository)
+##   Requires:
+##     - One of; Debian, Ubuntu, Mint
+## LINK
+##   Repository: https://github.com/davidsuart/bootstrap
+##
 
-#
-# [ABOUT]
-# - Install ansible & minimum python dependencies
-#
-# [ASSUMPTIONS]
-# - That we only use Ubuntu :-/
-#
+# strict mode
+set -o errexit -o nounset -o pipefail
 
-dist=`grep DISTRIB_ID /etc/*-release | awk -F '=' '{print $2}'`
+# variables
+distrib="unknown"
 
-if [ "$dist" == "Ubuntu" ]; then
+# functions
+function identifyDistrib () {
+  # This is unnecessarily harder than it should be -_-
+  if [[ -f /etc/linuxmint/info ]]; then
+    distrib="linuxmint"
+  elif [[ -f /etc/lsb-release ]] && [[ "$(< /etc/lsb-release)" == *"DISTRIB_ID=LinuxMint"* ]]; then
+    distrib="linuxmint"
+  elif [[ -f /etc/lsb-release ]] && [[ "$(< /etc/lsb-release)" == *"DISTRIB_ID=Ubuntu"* ]]; then
+    distrib="ubuntu"
+  elif [[ -f /etc/os-release ]] && [[ "$(< /etc/os-release)" == *"ID=ubuntu"* ]]; then
+    distrib="ubuntu"
+  elif [[ -f /etc/os-release ]] && [[ "$(< /etc/os-release)" == *"ID=debian"* ]]; then
+    distrib="debian"
+  elif [[ -f /etc/debian_version ]]; then
+    distrib="debian"
+  else
+    distrib="unknown"
+  fi
+  printf "Found distribution: [${distrib}] \n"
+}
 
-  printf "Found: Ubuntu \n"
-
+function installDebianPackages () {
   sudo apt-get update
-  sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates software-properties-common
+  sudo apt-get install -y --no-install-recommends python=2.7* libpython2.7 libpython-stdlib \
+                                                  python-pkg-resources python-setuptools python-six \
+                                                  python-httplib2 python-jinja2 python-markupsafe python-yaml \
+                                                  python-crypto python-ecdsa python-paramiko \
+                                                  apt-transport-https ca-certificates software-properties-common
+
+  # Note: We put ansible *onto* the target to facilitate the 'ansible-pull' use case
   sudo apt-add-repository -y ppa:ansible/ansible
   sudo apt-get update
-  sudo apt-get install -y --no-install-recommends python=2.7* libpython2.7
-  sudo apt-get install -y --no-install-recommends libpython-stdlib python-pkg-resources python-setuptools python-six \
-                                                  python-httplib2 python-jinja2 python-markupsafe python-yaml \
-                                                  python-crypto python-ecdsa python-paramiko
-  sudo apt-get install -y --no-install-recommends ansible sshpass
-  sudo apt-get install -y openssh-server
+  sudo apt-get install -y --no-install-recommends ansible sshpass openssh-server
+}
 
-else
-
-  printf "This is (Currently) only intended for Ubuntu \n"
-  exit 1
-
+# main
+(
+  set -e
+  identifyDistrib
+  if [[ "$distrib" == "ubuntu" || "$distrib" == "debian" || "$distrib" == "linuxmint" ]]; then
+    installDebianPackages
+  else
+    printf "ERROR: This script currently supports only Debian/Ubuntu/Mint. \n"
+    exit 1
+  fi
+)
+# catch
+exitCode=$?
+if [ $exitCode -ne 0 ]; then
+  printf "We encountered an error. \n"
+  # Exit and pass on the error
+  exit $exitCode
 fi
