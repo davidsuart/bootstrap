@@ -39,16 +39,21 @@ function identifyDistrib () {
 }
 
 function installDebianPackages () {
+  # python baseline packages
   sudo apt-get update
   sudo apt-get install -y --no-install-recommends python=2.7* libpython2.7 libpython-stdlib \
                                                   python-pkg-resources python-setuptools python-six \
                                                   python-httplib2 python-jinja2 python-markupsafe python-yaml \
-                                                  python-crypto python-ecdsa python-paramiko \
-                                                  apt-transport-https ca-certificates software-properties-common
+                                                  python-crypto python-ecdsa python-paramiko
+
+  # Add PPA for Ubuntu
+  if [[ "$distrib" == "ubuntu" ]]; then
+    sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates software-properties-common
+    sudo apt-add-repository -y ppa:ansible/ansible
+    sudo apt-get update
+  fi
 
   # Note: We put ansible *onto* the target to facilitate the 'ansible-pull' use case
-  sudo apt-add-repository -y ppa:ansible/ansible
-  sudo apt-get update
   sudo apt-get install -y --no-install-recommends ansible sshpass openssh-server
 }
 
