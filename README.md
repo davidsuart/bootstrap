@@ -13,7 +13,7 @@ You probably want either `linux-for-ansible.sh` or `windows-for-winrm.ps1`
 Note: Currently this script only targets Debian/Ubuntu/Mint. Your mileage may vary on other Debian-based distros.
 
 ```Shell
-$ bash <(curl -s https://git.io/bstlnx)
+$ bash <(curl -s -L https://git.io/bstlnx)
 
 # (Expanded)
 # https://raw.githubusercontent.com/davidsuart/bootstrap/master/linux-for-ansible.sh
