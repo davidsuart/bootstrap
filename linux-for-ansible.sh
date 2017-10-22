@@ -44,7 +44,7 @@ function installDebianPackages () {
   sudo apt-get install -y --no-install-recommends python=2.7* libpython2.7 libpython-stdlib \
                                                   python-pkg-resources python-setuptools python-six \
                                                   python-httplib2 python-jinja2 python-markupsafe python-yaml \
-                                                  python-crypto python-ecdsa python-paramiko
+                                                  python-crypto python-cryptography python-ecdsa python-paramiko
 
   # Add PPA for Ubuntu
   if [[ "$distrib" == "ubuntu" ]]; then
