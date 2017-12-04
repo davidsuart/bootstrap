@@ -45,34 +45,6 @@ function configWinRM {
   }
   process {
     try {
-        # Restrict unencrypted communication on the service
-        Set-Item WSMan:\localhost\Service\AllowUnencrypted -value false
-
-        # Enable basic and negotiate auth on the server
-        Set-Item -Path "WSMan:\localhost\Service\Auth\Basic" -Value $true
-        Set-Item -Path "WSMan:\localhost\Service\Auth\Negotiate" -Value $true
-
-        # Increase timeout to 15 min
-        Set-Item -Path "WSMan:\localhost\MaxTimeoutms" 900000
-
-        # Increase memory allocated to shell sessions
-        Set-Item -Path "WSMan:\localhost\Shell\MaxMemoryPerShellMB" 1024 -WarningAction SilentlyContinue
-        Set-Item -Path "WSMan:\localhost\Plugin\Microsoft.PowerShell\Quotas\MaxMemoryPerShellMB" 1024 `
-          -WarningAction SilentlyContinue
-        Set-Item -Path "WSMan:\localhost\Plugin\Microsoft.PowerShell32\Quotas\MaxMemoryPerShellMB" 1024 `
-          -WarningAction SilentlyContinue
-
-        # Make sure WinRM is set to auto-start
-        Set-Service -Name "WinRM" -StartupType Automatic
-
-        # Configure LocalAccountTokenFilterPolicy to grant administrative rights remotely to local users.
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
-          -Name LocalAccountTokenFilterPolicy -Value 1
-
-        # Enable the PowerShell WSMan providers
-        Set-Item -Path "WSMan:\localhost\Plugin\Microsoft.PowerShell\Enabled" true -WarningAction SilentlyContinue
-        Set-Item -Path "WSMan:\localhost\Plugin\Microsoft.PowerShell32\Enabled" true -WarningAction SilentlyContinue
-
         # Let PSRemoting/PSSessionConfiguration do the heavy lifting
         if ($purge)
         {
@@ -108,6 +80,34 @@ function configWinRM {
           Write-Output "Not removing any existing listeners/firewall rules due to [-purge `$false] flag"
         }
         
+        # Restrict unencrypted communication on the service
+        Set-Item WSMan:\localhost\Service\AllowUnencrypted -value false
+
+        # Enable basic and negotiate auth on the server
+        Set-Item -Path "WSMan:\localhost\Service\Auth\Basic" -Value $true
+        Set-Item -Path "WSMan:\localhost\Service\Auth\Negotiate" -Value $true
+
+        # Increase timeout to 15 min
+        Set-Item -Path "WSMan:\localhost\MaxTimeoutms" 900000
+
+        # Increase memory allocated to shell sessions
+        Set-Item -Path "WSMan:\localhost\Shell\MaxMemoryPerShellMB" 1024 -WarningAction SilentlyContinue
+        Set-Item -Path "WSMan:\localhost\Plugin\Microsoft.PowerShell\Quotas\MaxMemoryPerShellMB" 1024 `
+          -WarningAction SilentlyContinue
+        Set-Item -Path "WSMan:\localhost\Plugin\Microsoft.PowerShell32\Quotas\MaxMemoryPerShellMB" 1024 `
+          -WarningAction SilentlyContinue
+
+        # Make sure WinRM is set to auto-start
+        Set-Service -Name "WinRM" -StartupType Automatic
+
+        # Configure LocalAccountTokenFilterPolicy to grant administrative rights remotely to local users.
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
+          -Name LocalAccountTokenFilterPolicy -Value 1
+
+        # Enable the PowerShell WSMan providers
+        Set-Item -Path "WSMan:\localhost\Plugin\Microsoft.PowerShell\Enabled" true -WarningAction SilentlyContinue
+        Set-Item -Path "WSMan:\localhost\Plugin\Microsoft.PowerShell32\Enabled" true -WarningAction SilentlyContinue
+
         # Get the hostname
         Set-Variable -Name "strHostName" -Value `
         ([System.Net.Dns]::GetHostByName((hostname)).HostName).ToLower()
