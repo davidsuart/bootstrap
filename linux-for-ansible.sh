@@ -46,12 +46,9 @@ function installDebianPackages () {
                                                   python-httplib2 python-jinja2 python-markupsafe python-yaml \
                                                   python-crypto python-cryptography python-ecdsa python-paramiko
 
-  # Add PPA for Ubuntu
-  if [[ "$distrib" == "ubuntu" ]]; then
-    sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates software-properties-common
-    sudo apt-add-repository -y ppa:ansible/ansible
-    sudo apt-get update
-  fi
+  sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates software-properties-common
+  sudo apt-add-repository -y ppa:ansible/ansible
+  sudo apt-get update
 
   # Note: We put ansible *onto* the target to facilitate the 'ansible-pull' use case
   sudo apt-get install -y --no-install-recommends ansible sshpass openssh-server
