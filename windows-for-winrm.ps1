@@ -80,15 +80,17 @@ function configWinRM {
           Write-Output "Not removing any existing listeners/firewall rules due to [-purge `$false] flag"
         }
         
+        # Note: Temporarily disable subject to further testing
         # Restrict unencrypted communication on the service
-        Set-Item WSMan:\localhost\Service\AllowUnencrypted -value false
+        # Set-Item WSMan:\localhost\Service\AllowUnencrypted -value false
 
         # Enable basic and negotiate auth on the server
         Set-Item -Path "WSMan:\localhost\Service\Auth\Basic" -Value $true
         Set-Item -Path "WSMan:\localhost\Service\Auth\Negotiate" -Value $true
 
+        # Note: Temporarily disable subject to further testing
         # Increase timeout to 15 min
-        Set-Item -Path "WSMan:\localhost\MaxTimeoutms" 900000
+        # Set-Item -Path "WSMan:\localhost\MaxTimeoutms" 900000
 
         # Increase memory allocated to shell sessions
         Set-Item -Path "WSMan:\localhost\Shell\MaxMemoryPerShellMB" 1024 -WarningAction SilentlyContinue
