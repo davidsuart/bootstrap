@@ -16,7 +16,8 @@ Note: Currently this script only targets Debian/Ubuntu/Mint. Your mileage may va
 $ bash <(curl -s -L https://git.io/bstlnx)
 
 # (Expanded)
-# https://raw.githubusercontent.com/davidsuart/bootstrap/master/linux-for-ansible.sh
+# bash <(curl --silent --location \
+#   https://raw.githubusercontent.com/davidsuart/bootstrap/master/linux-for-ansible.sh)
 ```
 
 ### Windows
